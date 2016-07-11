@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfImageViewer.Client", "WcfImageViewer\WcfImageViewer.Client.csproj", "{5A90C2D0-5E9B-42D0-9C61-50153D7E1F6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfImageViewer.Contracts", "WcfImageViewer.Contracts\WcfImageViewer.Contracts.csproj", "{F9209F04-4975-40A6-8E7F-E6B92FB9000C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfImageViewer.Services", "WcfImageViewer.Services\WcfImageViewer.Services.csproj", "{5D1D3613-78DD-4526-ACCF-8CDBD2DEA94B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfImageViewer.Services.Host", "WcfImageViewer.Services.Host\WcfImageViewer.Services.Host.csproj", "{1579E2BF-26EB-4A5F-9C1B-127F77F49C8C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfImageViewer.Services.Tests", "WcfImageViewer.Services.Tests\WcfImageViewer.Services.Tests.csproj", "{9CA4F633-FEED-4EBD-A8ED-FDEA968B58E4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5A90C2D0-5E9B-42D0-9C61-50153D7E1F6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A90C2D0-5E9B-42D0-9C61-50153D7E1F6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A90C2D0-5E9B-42D0-9C61-50153D7E1F6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A90C2D0-5E9B-42D0-9C61-50153D7E1F6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9209F04-4975-40A6-8E7F-E6B92FB9000C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9209F04-4975-40A6-8E7F-E6B92FB9000C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9209F04-4975-40A6-8E7F-E6B92FB9000C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9209F04-4975-40A6-8E7F-E6B92FB9000C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D1D3613-78DD-4526-ACCF-8CDBD2DEA94B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D1D3613-78DD-4526-ACCF-8CDBD2DEA94B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D1D3613-78DD-4526-ACCF-8CDBD2DEA94B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D1D3613-78DD-4526-ACCF-8CDBD2DEA94B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1579E2BF-26EB-4A5F-9C1B-127F77F49C8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1579E2BF-26EB-4A5F-9C1B-127F77F49C8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1579E2BF-26EB-4A5F-9C1B-127F77F49C8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1579E2BF-26EB-4A5F-9C1B-127F77F49C8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CA4F633-FEED-4EBD-A8ED-FDEA968B58E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CA4F633-FEED-4EBD-A8ED-FDEA968B58E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CA4F633-FEED-4EBD-A8ED-FDEA968B58E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CA4F633-FEED-4EBD-A8ED-FDEA968B58E4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
