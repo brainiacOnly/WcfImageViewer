@@ -53,50 +53,18 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Proxies\PictureManagerClient.cs" />
     <Compile Include="ProxyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service References\PictureClient\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Service References\PictureClient\FileSystemPictureManager.wsdl" />
-    <None Include="Service References\PictureClient\item.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\PictureClient\item1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\PictureClient\item2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\PictureClient\WcfImageViewer.Services.Tests.PictureClient.Picture.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadataStorage Include="Service References\PictureClient\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\PictureClient\item.disco" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\PictureClient\configuration91.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\PictureClient\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\PictureClient\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
+    <ProjectReference Include="..\WcfImageViewer.Contracts\WcfImageViewer.Contracts.csproj">
+      <Project>{f9209f04-4975-40a6-8e7f-e6b92fb9000c}</Project>
+      <Name>WcfImageViewer.Contracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

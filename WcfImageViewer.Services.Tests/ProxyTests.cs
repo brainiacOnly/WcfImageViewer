@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WcfImageViewer.Services.Tests.PictureClient;
+using WcfImageViewer.Contracts;
+using WcfImageViewer.Services.Tests.Proxies;
+using WcfImageViewer.Services.Tests.Proxies;
 
 namespace WcfImageViewer.Services.Tests
 {
@@ -11,16 +14,18 @@ namespace WcfImageViewer.Services.Tests
         public void StubTests()
         {
             var proxy = new PictureManagerClient();
-            
-            proxy.Open();
-            var allImages = proxy.GetAll();
+
+            /*var allImages = proxy.GetAll();
             var singleImage = proxy.Get("Tomorrow picture");
-            proxy.Upload(new Picture { Name = "Added", CreationDate = new DateTime(1994, 08, 19), Image = new byte[21] });
+            proxy.Upload(new PictureUploadInfo { Name = "Added", CreationDate = new DateTime(1994, 08, 19), Image = new MemoryStream()});
             proxy.Close();
 
             Assert.AreEqual(2, allImages.Length);
             Assert.IsNotNull(singleImage);
-            Assert.AreEqual(10, singleImage.Length);
+            Assert.IsInstanceOfType(singleImage, typeof(MemoryStream));*/
+
+            var result = proxy.GetMessage();
+            Assert.AreEqual(result, "Hello world");
         }
     }
 }

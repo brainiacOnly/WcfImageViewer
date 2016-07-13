@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,9 +15,12 @@ namespace WcfImageViewer.Contracts
         PictureUploadInfo[] GetAll();
 
         [OperationContract]
-        byte[] Get(string name);
+        Stream Get(string name);
 
         [OperationContract]
         void Upload(PictureUploadInfo picture);
+
+        [OperationContract]
+        string GetMessage();
     }
 }

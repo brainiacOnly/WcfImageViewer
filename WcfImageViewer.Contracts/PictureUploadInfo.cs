@@ -15,6 +15,9 @@ namespace WcfImageViewer.Contracts
         [MessageHeader]
         public string Name { get; set; }
 
+        [MessageHeader]
+        public DateTime CreationDate { get; set; }
+
         [DataMember]
         public Stream Image { get; set; }
 

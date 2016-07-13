@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WcfImageViewer.Contracts;
 using System.Configuration;
+using System.IO;
 
 namespace WcfImageViewer.Services
 {
@@ -14,8 +15,8 @@ namespace WcfImageViewer.Services
         private string _storageDirectory;
         private List<PictureUploadInfo> stub = new List<PictureUploadInfo>
         {
-            new PictureUploadInfo{ Image = new byte[10], CreationDate = DateTime.Now.AddDays(1), Name="Tomorrow picture"},
-            new PictureUploadInfo{ Image = new byte[20], CreationDate = DateTime.Now.AddDays(2), Name="The day after tomorrow picture"}
+            new PictureUploadInfo{ Image = new MemoryStream(), CreationDate = DateTime.Now.AddDays(1), Name="Tomorrow picture"},
+            new PictureUploadInfo{ Image = new MemoryStream(), CreationDate = DateTime.Now.AddDays(2), Name="The day after tomorrow picture"}
         };
 
         public FileSystemPictureManager()
@@ -28,7 +29,7 @@ namespace WcfImageViewer.Services
             return stub.ToArray();
         }
 
-        public byte[] Get(string name)
+        public Stream Get(string name)
         {
             return stub.FirstOrDefault(i => i.Name == name).Image;
         }
@@ -39,6 +40,12 @@ namespace WcfImageViewer.Services
             stub.Add(picture);
             Console.WriteLine("Image({0},{1},{2})", picture.Image.Length, picture.CreationDate, picture.Name);
             Console.WriteLine("Finish add. Storage length is {0}", stub.Count);
+        }
+
+
+        public string GetMessage()
+        {
+            return "Hello world";
         }
     }
 }
