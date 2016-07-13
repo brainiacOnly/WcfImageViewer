@@ -13,11 +13,6 @@ namespace WcfImageViewer.Services
     {
         private string[] KNOWN_EXTENSIONS = new[] { ".jpg", ".jpeg", ".bmp", ".gif" };
         private string _storageDirectory;
-        private List<PictureUploadInfo> stub = new List<PictureUploadInfo>
-        {
-            new PictureUploadInfo{ Image = new MemoryStream(), CreationDate = DateTime.Now.AddDays(1), Name="Tomorrow picture"},
-            new PictureUploadInfo{ Image = new MemoryStream(), CreationDate = DateTime.Now.AddDays(2), Name="The day after tomorrow picture"}
-        };
 
         public FileSystemPictureManager()
         {
@@ -26,20 +21,50 @@ namespace WcfImageViewer.Services
 
         public PictureUploadInfo[] GetAll()
         {
-            return stub.ToArray();
+            var files =
+                Directory.GetFiles(_storageDirectory, "*.*", SearchOption.AllDirectories)
+                    .Where(f => KNOWN_EXTENSIONS.Any(e => f.EndsWith(e)));
+
+            var result = new List<PictureUploadInfo>();
+            foreach (var file in files)
+            {
+                var fileInfo = new FileInfo(file);
+                if (!fileInfo.Exists)
+                    throw new FileNotFoundException("File not found", file);
+                var stream = new FileStream(file, FileMode.Open, FileAccess.Read);
+                result.Add(new PictureUploadInfo
+                {
+                    Name = fileInfo.Name,
+                    Image = stream,
+                    CreationDate = fileInfo.CreationTime
+                });
+            }
+
+            return result.ToArray();
         }
 
         public Stream Get(string name)
         {
-            return stub.FirstOrDefault(i => i.Name == name).Image;
+            var fullName = Path.Combine(_storageDirectory, name);
+            return new FileStream(fullName, FileMode.Open, FileAccess.Read);
         }
 
         public void Upload(PictureUploadInfo picture)
         {
-            Console.WriteLine("Begin add. Storage length is {0}", stub.Count);
-            stub.Add(picture);
-            Console.WriteLine("Image({0},{1},{2})", picture.Image.Length, picture.CreationDate, picture.Name);
-            Console.WriteLine("Finish add. Storage length is {0}", stub.Count);
+            var fullName = Path.Combine(_storageDirectory, picture.Name);
+            FileStream targetStream = null;
+            using (targetStream = new FileStream(fullName, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                int bufferSize = 100000;
+                byte[] buffer = new byte[bufferSize];
+                int count = 0;
+                while ((count = picture.Image.Read(buffer, 0, count)) > 0)
+                {
+                    targetStream.Write(buffer, 0, count);
+                }
+                targetStream.Close();
+                picture.Image.Close();
+            }
         }
 
 
