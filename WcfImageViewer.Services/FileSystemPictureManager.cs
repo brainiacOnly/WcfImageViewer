@@ -19,23 +19,21 @@ namespace WcfImageViewer.Services
             _storageDirectory = ConfigurationManager.AppSettings["workingDirectory"] ?? string.Empty;
         }
 
-        public PictureUploadInfo[] GetAll()
+        public PictureInfo[] GetAll()
         {
             var files =
                 Directory.GetFiles(_storageDirectory, "*.*", SearchOption.AllDirectories)
                     .Where(f => KNOWN_EXTENSIONS.Any(e => f.EndsWith(e)));
 
-            var result = new List<PictureUploadInfo>();
+            var result = new List<PictureInfo>();
             foreach (var file in files)
             {
                 var fileInfo = new FileInfo(file);
                 if (!fileInfo.Exists)
                     throw new FileNotFoundException("File not found", file);
-                var stream = new FileStream(file, FileMode.Open, FileAccess.Read);
-                result.Add(new PictureUploadInfo
+                result.Add(new PictureInfo
                 {
                     Name = fileInfo.Name,
-                    Image = stream,
                     CreationDate = fileInfo.CreationTime
                 });
             }
@@ -49,7 +47,7 @@ namespace WcfImageViewer.Services
             return new FileStream(fullName, FileMode.Open, FileAccess.Read);
         }
 
-        public void Upload(PictureUploadInfo picture)
+        public void Upload(FileUploadMessage picture)
         {
             var fullName = Path.Combine(_storageDirectory, picture.Name);
             FileStream targetStream = null;

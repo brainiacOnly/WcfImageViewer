@@ -29,7 +29,7 @@ namespace WcfImageViewer.Services.Tests
             var fileInfo = new FileInfo(@"..\..\Files\wcf.png");
             using (FileStream stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
             {
-                var request = new PictureUploadInfo
+                var request = new FileUploadMessage
                 {
                     Image = stream,
                     Name = fileInfo.Name
@@ -50,7 +50,7 @@ namespace WcfImageViewer.Services.Tests
             proxy.Close();
 
             Assert.AreEqual(6, result.Length);
-            Assert.AreEqual(429804, result.First(i => i.Name == "1.jpg").Image.Length);
+            Assert.IsTrue(result.Any(i => i.Name == "1.jpg"));
         }
 
         [TestMethod]

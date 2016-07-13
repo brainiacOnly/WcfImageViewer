@@ -10,13 +10,10 @@ using System.IO;
 namespace WcfImageViewer.Contracts
 {
     [MessageContract]
-    public class PictureUploadInfo : IDisposable
+    public class FileUploadMessage : IDisposable
     {
         [MessageHeader]
         public string Name { get; set; }
-
-        [MessageHeader]
-        public DateTime CreationDate { get; set; }
 
         [MessageBodyMember]
         public Stream Image { get; set; }

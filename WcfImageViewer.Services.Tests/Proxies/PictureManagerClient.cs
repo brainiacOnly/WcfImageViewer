@@ -6,7 +6,7 @@ namespace WcfImageViewer.Services.Tests.Proxies
 {
     public class PictureManagerClient : ClientBase<IPictureManager>, IPictureManager
     {
-        public PictureUploadInfo[] GetAll()
+        public PictureInfo[] GetAll()
         {
             return Channel.GetAll();
         }
@@ -16,7 +16,7 @@ namespace WcfImageViewer.Services.Tests.Proxies
             return Channel.Get(name);
         }
 
-        public void Upload(PictureUploadInfo picture)
+        public void Upload(FileUploadMessage picture)
         {
             Channel.Upload(picture);
         }

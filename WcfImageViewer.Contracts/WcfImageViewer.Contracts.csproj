@@ -42,7 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IPictureManager.cs" />
-    <Compile Include="PictureUploadInfo.cs" />
+    <Compile Include="FileUploadMessage.cs" />
+    <Compile Include="PictureInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
