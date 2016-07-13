@@ -11,12 +11,12 @@ namespace WcfImageViewer.Contracts
     public interface IPictureManager
     {
         [OperationContract]
-        Picture[] GetAll();
+        PictureUploadInfo[] GetAll();
 
         [OperationContract]
         byte[] Get(string name);
 
         [OperationContract]
-        void Upload(Picture picture);
+        void Upload(PictureUploadInfo picture);
     }
 }

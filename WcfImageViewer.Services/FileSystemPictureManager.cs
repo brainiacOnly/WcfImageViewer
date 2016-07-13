@@ -12,10 +12,10 @@ namespace WcfImageViewer.Services
     {
         private string[] KNOWN_EXTENSIONS = new[] { ".jpg", ".jpeg", ".bmp", ".gif" };
         private string _storageDirectory;
-        private List<Picture> stub = new List<Picture>
+        private List<PictureUploadInfo> stub = new List<PictureUploadInfo>
         {
-            new Picture{ Image = new byte[10], CreationDate = DateTime.Now.AddDays(1), Name="Tomorrow picture"},
-            new Picture{ Image = new byte[20], CreationDate = DateTime.Now.AddDays(2), Name="The day after tomorrow picture"}
+            new PictureUploadInfo{ Image = new byte[10], CreationDate = DateTime.Now.AddDays(1), Name="Tomorrow picture"},
+            new PictureUploadInfo{ Image = new byte[20], CreationDate = DateTime.Now.AddDays(2), Name="The day after tomorrow picture"}
         };
 
         public FileSystemPictureManager()
@@ -23,7 +23,7 @@ namespace WcfImageViewer.Services
             _storageDirectory = ConfigurationManager.AppSettings["workingDirectory"] ?? string.Empty;
         }
 
-        public Picture[] GetAll()
+        public PictureUploadInfo[] GetAll()
         {
             return stub.ToArray();
         }
@@ -33,7 +33,7 @@ namespace WcfImageViewer.Services
             return stub.FirstOrDefault(i => i.Name == name).Image;
         }
 
-        public void Upload(Picture picture)
+        public void Upload(PictureUploadInfo picture)
         {
             Console.WriteLine("Begin add. Storage length is {0}", stub.Count);
             stub.Add(picture);
