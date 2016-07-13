@@ -11,7 +11,7 @@ namespace WcfImageViewer.Services
 {
     public class FileSystemPictureManager : IPictureManager
     {
-        private string[] KNOWN_EXTENSIONS = new[] { ".jpg", ".jpeg", ".bmp", ".gif" };
+        private string[] KNOWN_EXTENSIONS = { ".jpg", ".jpeg", ".bmp", ".gif", ".png" };
         private string _storageDirectory;
 
         public FileSystemPictureManager()
@@ -58,7 +58,7 @@ namespace WcfImageViewer.Services
                 int bufferSize = 100000;
                 byte[] buffer = new byte[bufferSize];
                 int count = 0;
-                while ((count = picture.Image.Read(buffer, 0, count)) > 0)
+                while ((count = picture.Image.Read(buffer, 0, bufferSize)) > 0)
                 {
                     targetStream.Write(buffer, 0, count);
                 }

@@ -18,7 +18,7 @@ namespace WcfImageViewer.Contracts
         [MessageHeader]
         public DateTime CreationDate { get; set; }
 
-        [DataMember]
+        [MessageBodyMember]
         public Stream Image { get; set; }
 
         public void Dispose()
