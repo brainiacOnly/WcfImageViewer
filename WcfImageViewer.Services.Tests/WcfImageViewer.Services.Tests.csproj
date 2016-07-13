@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
@@ -53,7 +54,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Proxies\PictureManagerClient.cs" />
     <Compile Include="ProxyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -61,13 +61,22 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\WcfImageVeiwer.Client\WcfImageVeiwer.Client.csproj">
+      <Project>{05f15941-df3c-44f3-9126-574939cbd787}</Project>
+      <Name>WcfImageVeiwer.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WcfImageViewer.Contracts\WcfImageViewer.Contracts.csproj">
       <Project>{f9209f04-4975-40a6-8e7f-e6b92fb9000c}</Project>
       <Name>WcfImageViewer.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WcfImageViewer.Services\WcfImageViewer.Services.csproj">
+      <Project>{5d1d3613-78dd-4526-accf-8cdbd2dea94b}</Project>
+      <Name>WcfImageViewer.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="Files\microsoft.png" />
     <Content Include="Files\wcf.png" />
   </ItemGroup>
   <Choose>

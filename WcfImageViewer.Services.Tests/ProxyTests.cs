@@ -1,16 +1,36 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.ServiceModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using WcfImageVeiwer.Client.Proxies;
 using WcfImageViewer.Contracts;
-using WcfImageViewer.Services.Tests.Proxies;
-using WcfImageViewer.Services.Tests.Proxies;
 
 namespace WcfImageViewer.Services.Tests
 {
     [TestClass]
     public class ProxyTests
     {
+        private ServiceHost _host = null;
+        private string _directory;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            _host = new ServiceHost(typeof(FileSystemPictureManager));
+            _host.Open();
+            _directory = ConfigurationManager.AppSettings["workingDirectory"];
+            Directory.CreateDirectory(_directory);
+        }
+
+        [TestCleanup]
+        public void CleanUp()
+        {
+            _host.Close();
+            Directory.Delete(_directory, true);
+        }
+
         [TestMethod]
         public void ShouldReturnHelloWorld()
         {
@@ -22,11 +42,10 @@ namespace WcfImageViewer.Services.Tests
             Assert.AreEqual(result, "Hello world");
         }
 
-        [TestMethod]
-        public void ShouldSaveImage()
+        private void SendImage(string fromPath)
         {
             var proxy = new PictureManagerClient();
-            var fileInfo = new FileInfo(@"..\..\Files\wcf.png");
+            var fileInfo = new FileInfo(fromPath);
             using (FileStream stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
             {
                 var request = new FileUploadMessage
@@ -37,30 +56,45 @@ namespace WcfImageViewer.Services.Tests
                 proxy.Upload(request);
             }
             proxy.Close();
+        }
 
-            Assert.IsTrue(File.Exists(@"C:\Projects\Images\wcf.png"));
+        [TestMethod]
+        public void ShouldSaveImage()
+        {
+            var imageInfo = new FileInfo(ConfigurationManager.AppSettings["image1"]);
+
+            SendImage(imageInfo.FullName);
+
+            Assert.IsTrue(File.Exists(Path.Combine(_directory, imageInfo.Name)));
         }
 
         [TestMethod]
         public void ShouldDonloadAllImages()
         {
             var proxy = new PictureManagerClient();
-
+            var imageInfo1 = new FileInfo(ConfigurationManager.AppSettings["image1"]);
+            var imageInfo2 = new FileInfo(ConfigurationManager.AppSettings["image2"]);
+            SendImage(imageInfo1.FullName);
+            SendImage(imageInfo2.FullName);
+            
             var result = proxy.GetAll();
             proxy.Close();
 
-            Assert.AreEqual(6, result.Length);
-            Assert.IsTrue(result.Any(i => i.Name == "1.jpg"));
+            Assert.AreEqual(2, result.Length);
+            Assert.IsTrue(result.Any(i => i.Name == imageInfo1.Name));
+            Assert.IsTrue(result.Any(i => i.Name == imageInfo2.Name));
         }
 
         [TestMethod]
         public void ShouldDownloadImage()
         {
             var proxy = new PictureManagerClient();
-            var name = "1.jpg";
+            var imageInfo = new FileInfo(ConfigurationManager.AppSettings["image1"]);
+            SendImage(imageInfo.FullName);
+            var bufferName = Path.Combine(imageInfo.Directory.FullName, "buffer." + imageInfo.Name);
 
-            var result = proxy.Get(name);
-            using (FileStream writerStream = new FileStream(name, FileMode.Create, FileAccess.Write, FileShare.None))
+            var result = proxy.Get(imageInfo.FullName);
+            using (FileStream writerStream = new FileStream(bufferName, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 const int bufferSize = 100000;
                 byte[] buffer = new byte[bufferSize];
@@ -73,8 +107,8 @@ namespace WcfImageViewer.Services.Tests
                 result.Close();
             }
 
-            Assert.IsTrue(File.Exists(name));
-            File.Delete(name);
+            Assert.IsTrue(File.Exists(bufferName));
+            File.Delete(bufferName);
         }
     }
 }

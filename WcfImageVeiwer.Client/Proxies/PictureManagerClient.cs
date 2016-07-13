@@ -2,7 +2,7 @@
 using System.ServiceModel;
 using WcfImageViewer.Contracts;
 
-namespace WcfImageViewer.Services.Tests.Proxies
+namespace WcfImageVeiwer.Client.Proxies
 {
     public class PictureManagerClient : ClientBase<IPictureManager>, IPictureManager
     {
