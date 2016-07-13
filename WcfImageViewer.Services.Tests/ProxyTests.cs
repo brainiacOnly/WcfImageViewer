@@ -5,7 +5,8 @@ using System.Linq;
 using System.ServiceModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WcfImageVeiwer.Client.Proxies;
-using WcfImageViewer.Contracts;
+using WcfImageViewer.Contracts.DataContracts;
+using WcfImageViewer.Contracts.ServiceContracts;
 
 namespace WcfImageViewer.Services.Tests
 {
@@ -29,17 +30,6 @@ namespace WcfImageViewer.Services.Tests
         {
             _host.Close();
             Directory.Delete(_directory, true);
-        }
-
-        [TestMethod]
-        public void ShouldReturnHelloWorld()
-        {
-            var proxy = new PictureManagerClient();
-
-            var result = proxy.GetMessage();
-            proxy.Close();
-
-            Assert.AreEqual(result, "Hello world");
         }
 
         private void SendImage(string fromPath)
@@ -109,6 +99,47 @@ namespace WcfImageViewer.Services.Tests
 
             Assert.IsTrue(File.Exists(bufferName));
             File.Delete(bufferName);
+        }
+
+        [TestMethod]
+        public void ShouldThrowExceptionOnNotFoundFile()
+        {
+            var proxy = new PictureManagerClient();
+
+            try
+            {
+                var result = proxy.Get("123.jpg");
+            }
+            catch (FaultException<FileNotFoundException> ex)
+            {
+                Console.WriteLine(ex.Detail.Message);
+            }
+        }
+
+        [TestMethod]
+        public void ShouldThrowExceptionOnWrongName()
+        {
+            var imageInfo = new FileInfo(ConfigurationManager.AppSettings["image1"]);
+            var proxy = new PictureManagerClient();
+
+            try
+            {
+                using (FileStream stream = new FileStream(imageInfo.FullName, FileMode.Open, FileAccess.Read))
+                {
+                    var request = new FileUploadMessage
+                    {
+                        Image = stream,
+                        Name = "?:////\\\\"
+                    };
+                    proxy.Upload(request);
+                }
+            }
+            catch (FaultException<ArgumentException> ex)
+            {
+                Console.WriteLine(ex.Detail.Message);
+            }
+            
+            proxy.Close();
         }
     }
 }

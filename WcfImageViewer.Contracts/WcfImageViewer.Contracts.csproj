@@ -41,9 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IPictureManager.cs" />
-    <Compile Include="FileUploadMessage.cs" />
-    <Compile Include="PictureInfo.cs" />
+    <Compile Include="ServiceContracts\IPictureManager.cs" />
+    <Compile Include="DataContracts\FileUploadMessage.cs" />
+    <Compile Include="DataContracts\PictureInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

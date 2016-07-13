@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System.ServiceModel;
 using WcfImageViewer.Contracts;
+using WcfImageViewer.Contracts.DataContracts;
+using WcfImageViewer.Contracts.ServiceContracts;
 
 namespace WcfImageVeiwer.Client.Proxies
 {
@@ -19,11 +21,6 @@ namespace WcfImageVeiwer.Client.Proxies
         public void Upload(FileUploadMessage picture)
         {
             Channel.Upload(picture);
-        }
-
-        public string GetMessage()
-        {
-            return Channel.GetMessage();
         }
     }
 }

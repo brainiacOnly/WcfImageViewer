@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WcfImageViewer.Contracts;
 using System.Configuration;
 using System.IO;
+using System.ServiceModel;
+using WcfImageViewer.Contracts.DataContracts;
+using WcfImageViewer.Contracts.ServiceContracts;
 
 namespace WcfImageViewer.Services
 {
+    [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class FileSystemPictureManager : IPictureManager
     {
         private string[] KNOWN_EXTENSIONS = { ".jpg", ".jpeg", ".bmp", ".gif", ".png" };
@@ -17,6 +18,10 @@ namespace WcfImageViewer.Services
         public FileSystemPictureManager()
         {
             _storageDirectory = ConfigurationManager.AppSettings["workingDirectory"] ?? string.Empty;
+            if (!Directory.Exists(_storageDirectory))
+            {
+                Directory.CreateDirectory(_storageDirectory);
+            }
         }
 
         public PictureInfo[] GetAll()
@@ -44,31 +49,42 @@ namespace WcfImageViewer.Services
         public Stream Get(string name)
         {
             var fullName = Path.Combine(_storageDirectory, name);
-            return new FileStream(fullName, FileMode.Open, FileAccess.Read);
+            FileStream result = null;
+            try
+            {
+                result = new FileStream(fullName, FileMode.Open, FileAccess.Read);
+            }
+            catch (FileNotFoundException ex)
+            {
+                throw new FaultException<FileNotFoundException>(ex);
+            }
+            return result;
         }
 
         public void Upload(FileUploadMessage picture)
         {
             var fullName = Path.Combine(_storageDirectory, picture.Name);
             FileStream targetStream = null;
-            using (targetStream = new FileStream(fullName, FileMode.Create, FileAccess.Write, FileShare.None))
+
+            try
             {
-                int bufferSize = 100000;
-                byte[] buffer = new byte[bufferSize];
-                int count = 0;
-                while ((count = picture.Image.Read(buffer, 0, bufferSize)) > 0)
+                using (targetStream = new FileStream(fullName, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
-                    targetStream.Write(buffer, 0, count);
+                    int bufferSize = 100000;
+                    byte[] buffer = new byte[bufferSize];
+                    int count = 0;
+                    while ((count = picture.Image.Read(buffer, 0, bufferSize)) > 0)
+                    {
+                        targetStream.Write(buffer, 0, count);
+                    }
+                    targetStream.Close();
+                    picture.Image.Close();
                 }
-                targetStream.Close();
-                picture.Image.Close();
             }
-        }
-
-
-        public string GetMessage()
-        {
-            return "Hello world";
+            catch (ArgumentException ex)
+            {                
+                throw new FaultException<ArgumentException>(ex);
+            }
         }
     }
 }

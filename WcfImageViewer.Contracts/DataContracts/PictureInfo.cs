@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace WcfImageViewer.Contracts
+namespace WcfImageViewer.Contracts.DataContracts
 {
     [DataContract]
     public class PictureInfo
