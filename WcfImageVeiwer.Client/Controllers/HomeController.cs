@@ -12,21 +12,35 @@ namespace WcfImageVeiwer.Client.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        public ActionResult Index(string id = null)
         {
             var proxy = new PictureManagerClient();
             var pictures = proxy.GetAll();
             var model = new PageModel();
+
             if (pictures.Any())
             {
                 model.Pictures = pictures.Select(i => new PictureViewInfo
                 {
                     DisplayName = i.Name,
                     Id = i.Name.GetHashCode().ToString()
-                });
-                var imageStream = proxy.Get(pictures.First().Name);
+                }).ToArray();
+
+                PictureViewInfo targetPicture = null;
+                if (id != null)
+                {
+                    targetPicture = model.Pictures.First(i => i.DisplayName.GetHashCode().ToString() == id);
+                }
+                else
+                {
+                    targetPicture = model.Pictures.First();
+                }
+
+                targetPicture.IsActive = true;
+                var imageStream = proxy.Get(targetPicture.DisplayName);
                 model.ImageBase64String = Convert.ToBase64String(ReadFileStream(imageStream));
             }
+            proxy.Close();
             return View(model);
         }
 

@@ -4,21 +4,32 @@
 }
 
 <div class="jumbotron">
-    <p class="lead">Choose the picture</p>
+    <h2 >Choose the picture</h2>
     <div class="row">
-        <div style="width: '''''''++6'''''''200px; height: 400px; overflow: auto;" class="col-lg-6">
-            <ul>
+        <div style="overflow: auto;" class="col-lg-4">
+            <div class="list-group">
                 @foreach (var picture in Model.Pictures)
                 {
-                    <li>@Html.ActionLink(picture.DisplayName, picture.Id)</li>
+                    if (picture.IsActive)
+                    {
+                        @Html.ActionLink(picture.DisplayName, "Index", "Home", new{id=picture.Id}, new { @class = "list-group-item active" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink(picture.DisplayName, "Index", "Home", new{id=picture.Id}, new { @class = "list-group-item" })
+                    }
                 }
-            </ul>
+            </div>
         </div>
-        <div class="col-lg-6">
-            <img height="400px" src="@String.Format("data:image/png;base64,{0}", Model.ImageBase64String)" />
+        <div class="col-lg-8" >
+            <img style="max-width: 100%" src="@String.Format("data:image/png;base64,{0}", Model.ImageBase64String)" />
         </div>    
     </div>
-    
-    <p><a href="http://asp.net" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+
+    <p>
+        <label class="btn btn-default btn-file">
+            Add Picture<input type="file" style="display: none;">
+        </label>
+    </p>
 </div>
 
