@@ -16,14 +16,18 @@ namespace WcfImageVeiwer.Client.Controllers
         {
             var proxy = new PictureManagerClient();
             var pictures = proxy.GetAll();
-            var model = new PageModel {Pictures = new List<PictureInfo>()};
+            var model = new PageModel();
             if (pictures.Any())
             {
-                model.Pictures = pictures;
+                model.Pictures = pictures.Select(i => new PictureViewInfo
+                {
+                    DisplayName = i.Name,
+                    Id = i.Name.GetHashCode().ToString()
+                });
                 var imageStream = proxy.Get(pictures.First().Name);
                 model.ImageBase64String = Convert.ToBase64String(ReadFileStream(imageStream));
             }
-            return View();
+            return View(model);
         }
 
         private byte[] ReadFileStream(Stream source)

@@ -1,22 +1,24 @@
-﻿    @{
+﻿@model WcfImageVeiwer.Client.Models.PageModel
+    @{
     ViewBag.Title = "Home Page";
 }
 
 <div class="jumbotron">
     <p class="lead">Choose the picture</p>
-    <div style="width: 100px; height: 100px; overflow: auto;">
-        <ul>
-            <li>1</li>
-            <li>1</li>
-            <li>1</li>
-            <li>1</li>
-            <li>1</li>
-            <li>1</li>
-            <li>1</li>
-            <li>1</li>
-            <li>1</li>
-        </ul>
+    <div class="row">
+        <div style="width: '''''''++6'''''''200px; height: 400px; overflow: auto;" class="col-lg-6">
+            <ul>
+                @foreach (var picture in Model.Pictures)
+                {
+                    <li>@Html.ActionLink(picture.DisplayName, picture.Id)</li>
+                }
+            </ul>
+        </div>
+        <div class="col-lg-6">
+            <img height="400px" src="@String.Format("data:image/png;base64,{0}", Model.ImageBase64String)" />
+        </div>    
     </div>
+    
     <p><a href="http://asp.net" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
 </div>
 

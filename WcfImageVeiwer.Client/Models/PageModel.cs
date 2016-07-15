@@ -8,7 +8,7 @@ namespace WcfImageVeiwer.Client.Models
 {
     public class PageModel
     {
-        public IEnumerable<PictureInfo> Pictures { get; set; }
+        public IEnumerable<PictureViewInfo> Pictures { get; set; }
 
         public string ImageBase64String { get; set; }
     }
