@@ -38,10 +38,27 @@ namespace WcfImageVeiwer.Client.Controllers
 
                 targetPicture.IsActive = true;
                 var imageStream = proxy.Get(targetPicture.DisplayName);
-                model.ImageBase64String = Convert.ToBase64String(ReadFileStream(imageStream));
+                model.UrlName = Convert.ToBase64String(ReadFileStream(imageStream));
             }
             proxy.Close();
             return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Upload(HttpPostedFileBase uploadFile)
+        {
+            if (uploadFile != null)
+            {
+                var proxy = new PictureManagerClient();
+                var uploadMessage = new FileUploadMessage
+                {
+                    Name = uploadFile.FileName,
+                    Image = uploadFile.InputStream
+                };
+                proxy.Upload(uploadMessage);
+                proxy.Close();
+            }
+            return RedirectToAction("Index");
         }
 
         private byte[] ReadFileStream(Stream source)

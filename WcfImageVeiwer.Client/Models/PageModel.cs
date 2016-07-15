@@ -10,6 +10,6 @@ namespace WcfImageVeiwer.Client.Models
     {
         public IEnumerable<PictureViewInfo> Pictures { get; set; }
 
-        public string ImageBase64String { get; set; }
+        public string UrlName { get; set; }
     }
 }
