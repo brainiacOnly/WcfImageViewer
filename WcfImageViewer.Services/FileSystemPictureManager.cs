@@ -28,7 +28,7 @@ namespace WcfImageViewer.Services
         {
             var files =
                 Directory.GetFiles(_storageDirectory, "*.*", SearchOption.AllDirectories)
-                    .Where(f => KNOWN_EXTENSIONS.Any(e => f.EndsWith(e)));
+                    .Where(f => KNOWN_EXTENSIONS.Any(e => f.ToLower().EndsWith(e)));
 
             var result = new List<PictureInfo>();
             foreach (var file in files)
