@@ -141,5 +141,31 @@ namespace WcfImageViewer.Services.Tests
             
             proxy.Close();
         }
+
+        [TestMethod]
+        public void ShouldThrowExceptionOnUnknownExtension()
+        {
+            var imageInfo = new FileInfo(ConfigurationManager.AppSettings["image1"]);
+            var proxy = new PictureManagerClient();
+
+            try
+            {
+                using (FileStream stream = new FileStream(imageInfo.FullName, FileMode.Open, FileAccess.Read))
+                {
+                    var request = new FileUploadMessage
+                    {
+                        Image = stream,
+                        Name = "unknown-extinsion.tiff"
+                    };
+                    proxy.Upload(request);
+                }
+            }
+            catch (FaultException<ArgumentException> ex)
+            {
+                Console.WriteLine(ex.Detail.Message);
+            }
+
+            proxy.Close();
+        }
     }
 }

@@ -68,6 +68,8 @@ namespace WcfImageViewer.Services
 
             try
             {
+                if (!KNOWN_EXTENSIONS.Any(e => picture.Name.ToLower().EndsWith(e)))
+                    throw new ArgumentException("The file is not an image! Unknown extension");
                 using (targetStream = new FileStream(fullName, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
                     int bufferSize = 100000;
@@ -82,7 +84,7 @@ namespace WcfImageViewer.Services
                 }
             }
             catch (ArgumentException ex)
-            {                
+            {
                 throw new FaultException<ArgumentException>(ex);
             }
         }
