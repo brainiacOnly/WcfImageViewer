@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.ServiceModel;
 using System.Web;
 using System.Web.Mvc;
 using WcfImageVeiwer.Client.Models;
@@ -29,7 +30,9 @@ namespace WcfImageVeiwer.Client.Controllers
                 PictureViewInfo targetPicture = null;
                 if (id != null)
                 {
-                    targetPicture = model.Pictures.First(i => i.DisplayName.GetHashCode().ToString() == id);
+                    targetPicture = model.Pictures.FirstOrDefault(i => i.DisplayName.GetHashCode().ToString() == id);
+                    if (targetPicture == null)
+                        throw new AggregateException("The image was not found");
                 }
                 else
                 {
@@ -49,14 +52,23 @@ namespace WcfImageVeiwer.Client.Controllers
         {
             if (uploadFile != null)
             {
-                var proxy = new PictureManagerClient();
-                var uploadMessage = new FileUploadMessage
+                try
                 {
-                    Name = uploadFile.FileName,
-                    Image = uploadFile.InputStream
-                };
-                proxy.Upload(uploadMessage);
-                proxy.Close();
+                    var proxy = new PictureManagerClient();
+                    var uploadMessage = new FileUploadMessage
+                    {
+                        Name = uploadFile.FileName,
+                        Image = uploadFile.InputStream
+                    };
+                    proxy.Upload(uploadMessage);
+                    proxy.Close();
+                }
+                catch (FaultException<ArgumentException> ex)
+                {
+                    ViewData["Message"] = ex.Detail.Message;
+                    ViewData["StackTrace"] = ex.Detail.StackTrace;
+                    return View("Error");
+                }
             }
             return RedirectToAction("Index");
         }
@@ -79,6 +91,21 @@ namespace WcfImageVeiwer.Client.Controllers
             }
 
             return targetStream.ToArray();
+        }
+        
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            Exception ex = filterContext.Exception;
+            filterContext.ExceptionHandled = true;
+
+            var result = new ViewResult()
+            {
+                ViewName = "Error"
+            };
+            result.ViewData["Message"] = ex.Message;
+            result.ViewData["StackTrace"] = ex.StackTrace;
+
+            filterContext.Result = result;
         }
     }
 }
