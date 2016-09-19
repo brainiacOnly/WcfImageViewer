@@ -54,6 +54,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ClientProxy.cs" />
     <Compile Include="ProxyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -61,10 +62,6 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WcfImageVeiwer.Client\WcfImageVeiwer.Client.csproj">
-      <Project>{05f15941-df3c-44f3-9126-574939cbd787}</Project>
-      <Name>WcfImageVeiwer.Client</Name>
-    </ProjectReference>
     <ProjectReference Include="..\WcfImageViewer.Contracts\WcfImageViewer.Contracts.csproj">
       <Project>{f9209f04-4975-40a6-8e7f-e6b92fb9000c}</Project>
       <Name>WcfImageViewer.Contracts</Name>

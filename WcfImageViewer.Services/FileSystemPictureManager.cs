@@ -4,6 +4,8 @@ using System.Linq;
 using System.Configuration;
 using System.IO;
 using System.ServiceModel;
+using System.Threading;
+using System.Threading.Tasks;
 using WcfImageViewer.Contracts.DataContracts;
 using WcfImageViewer.Contracts.ServiceContracts;
 
@@ -61,6 +63,11 @@ namespace WcfImageViewer.Services
             return result;
         }
 
+        public async Task<Stream> GetAsync(string name)
+        {
+            return await Task.Factory.StartNew(() => { Thread.Sleep(5000); return Get(name); });
+        }
+
         public void Upload(FileUploadMessage picture)
         {
             var fullName = Path.Combine(_storageDirectory, picture.Name);
@@ -72,13 +79,7 @@ namespace WcfImageViewer.Services
                     throw new ArgumentException("The file is not an image! Unknown extension");
                 using (targetStream = new FileStream(fullName, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
-                    int bufferSize = 100000;
-                    byte[] buffer = new byte[bufferSize];
-                    int count = 0;
-                    while ((count = picture.Image.Read(buffer, 0, bufferSize)) > 0)
-                    {
-                        targetStream.Write(buffer, 0, count);
-                    }
+                    picture.Image.CopyTo(targetStream);
                     targetStream.Close();
                     picture.Image.Close();
                 }

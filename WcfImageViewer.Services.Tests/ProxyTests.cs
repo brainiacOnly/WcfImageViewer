@@ -4,9 +4,7 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WcfImageVeiwer.Client.Proxies;
 using WcfImageViewer.Contracts.DataContracts;
-using WcfImageViewer.Contracts.ServiceContracts;
 
 namespace WcfImageViewer.Services.Tests
 {
@@ -34,7 +32,7 @@ namespace WcfImageViewer.Services.Tests
 
         private void SendImage(string fromPath)
         {
-            var proxy = new PictureManagerClient();
+            var proxy = new ClientProxy();
             var fileInfo = new FileInfo(fromPath);
             using (FileStream stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
             {
@@ -61,7 +59,7 @@ namespace WcfImageViewer.Services.Tests
         [TestMethod]
         public void ShouldDonloadAllImages()
         {
-            var proxy = new PictureManagerClient();
+            var proxy = new ClientProxy();
             var imageInfo1 = new FileInfo(ConfigurationManager.AppSettings["image1"]);
             var imageInfo2 = new FileInfo(ConfigurationManager.AppSettings["image2"]);
             SendImage(imageInfo1.FullName);
@@ -78,7 +76,7 @@ namespace WcfImageViewer.Services.Tests
         [TestMethod]
         public void ShouldDownloadImage()
         {
-            var proxy = new PictureManagerClient();
+            var proxy = new ClientProxy();
             var imageInfo = new FileInfo(ConfigurationManager.AppSettings["image1"]);
             SendImage(imageInfo.FullName);
             var bufferName = Path.Combine(imageInfo.Directory.FullName, "buffer." + imageInfo.Name);
@@ -86,13 +84,7 @@ namespace WcfImageViewer.Services.Tests
             var result = proxy.Get(imageInfo.FullName);
             using (FileStream writerStream = new FileStream(bufferName, FileMode.Create, FileAccess.Write, FileShare.None))
             {
-                const int bufferSize = 100000;
-                byte[] buffer = new byte[bufferSize];
-                int count = 0;
-                while ((count = result.Read(buffer, 0, bufferSize)) > 0)
-                {
-                    writerStream.Write(buffer, 0, count);
-                }
+                result.CopyTo(writerStream);
                 writerStream.Close();
                 result.Close();
             }
@@ -104,7 +96,7 @@ namespace WcfImageViewer.Services.Tests
         [TestMethod]
         public void ShouldThrowExceptionOnNotFoundFile()
         {
-            var proxy = new PictureManagerClient();
+            var proxy = new ClientProxy();
 
             try
             {
@@ -120,7 +112,7 @@ namespace WcfImageViewer.Services.Tests
         public void ShouldThrowExceptionOnWrongName()
         {
             var imageInfo = new FileInfo(ConfigurationManager.AppSettings["image1"]);
-            var proxy = new PictureManagerClient();
+            var proxy = new ClientProxy();
 
             try
             {
@@ -146,7 +138,7 @@ namespace WcfImageViewer.Services.Tests
         public void ShouldThrowExceptionOnUnknownExtension()
         {
             var imageInfo = new FileInfo(ConfigurationManager.AppSettings["image1"]);
-            var proxy = new PictureManagerClient();
+            var proxy = new ClientProxy();
 
             try
             {

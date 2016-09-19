@@ -5,6 +5,9 @@
 
 <div class="jumbotron">
     <h2 >Choose the picture</h2>
+    <div>
+        @HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString()
+    </div>
     <div class="row">
         <div style="overflow: auto;" class="col-lg-4">
             <div class="list-group" style="word-break: beak-all; max-height: 400px">
@@ -23,7 +26,8 @@
         </div>
         <div class="col-lg-8" >
             <img style="max-width: 100%" src="@String.Format("data:image/png;base64,{0}", Model.UrlName)" />
-        </div>    
+        </div>
+        
     </div>
 
     <p>

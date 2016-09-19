@@ -15,7 +15,7 @@ namespace WcfImageVeiwer.Client.Controllers
     {
         public ActionResult Index(string id = null)
         {
-            var proxy = new PictureManagerClient();
+            var proxy = new PictureManager();
             var pictures = proxy.GetAll();
             var model = new PageModel();
 
@@ -54,7 +54,7 @@ namespace WcfImageVeiwer.Client.Controllers
             {
                 try
                 {
-                    var proxy = new PictureManagerClient();
+                    var proxy = new PictureManager();
                     var uploadMessage = new FileUploadMessage
                     {
                         Name = uploadFile.FileName,
@@ -75,20 +75,10 @@ namespace WcfImageVeiwer.Client.Controllers
 
         private byte[] ReadFileStream(Stream source)
         {
-            int bufferLen = 100000;
-            byte[] buffer = new byte[bufferLen];
-            MemoryStream targetStream = null;
-
-            using (targetStream = new MemoryStream())
-            {
-                int count = 0;
-                while ((count = source.Read(buffer, 0, bufferLen)) > 0)
-                {
-                    targetStream.Write(buffer, 0, count);
-                }
-                targetStream.Close();
-                source.Close();
-            }
+            MemoryStream targetStream = new MemoryStream();
+            source.CopyTo(targetStream);
+            targetStream.Close();
+            source.Close();
 
             return targetStream.ToArray();
         }
