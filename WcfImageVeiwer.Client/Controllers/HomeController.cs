@@ -15,35 +15,38 @@ namespace WcfImageVeiwer.Client.Controllers
     {
         public ActionResult Index(string id = null)
         {
-            var proxy = new PictureManager();
-            var pictures = proxy.GetAll();
             var model = new PageModel();
-
-            if (pictures.Any())
+            using (var proxy = new PictureManager())
             {
-                model.Pictures = pictures.Select(i => new PictureViewInfo
-                {
-                    DisplayName = i.Name,
-                    Id = i.Name.GetHashCode().ToString()
-                }).ToArray();
+                var pictures = proxy.GetAll();
+                
 
-                PictureViewInfo targetPicture = null;
-                if (id != null)
+                if (pictures.Any())
                 {
-                    targetPicture = model.Pictures.FirstOrDefault(i => i.DisplayName.GetHashCode().ToString() == id);
-                    if (targetPicture == null)
-                        throw new AggregateException("The image was not found");
-                }
-                else
-                {
-                    targetPicture = model.Pictures.First();
-                }
+                    model.Pictures = pictures.Select(i => new PictureViewInfo
+                    {
+                        DisplayName = i.Name,
+                        Id = i.Name.GetHashCode().ToString()
+                    }).ToArray();
 
-                targetPicture.IsActive = true;
-                var imageStream = proxy.Get(targetPicture.DisplayName);
-                model.UrlName = Convert.ToBase64String(ReadFileStream(imageStream));
+                    PictureViewInfo targetPicture = null;
+                    if (id != null)
+                    {
+                        targetPicture = model.Pictures.FirstOrDefault(i => i.DisplayName.GetHashCode().ToString() == id);
+                        if (targetPicture == null)
+                            throw new AggregateException("The image was not found");
+                    }
+                    else
+                    {
+                        targetPicture = model.Pictures.First();
+                    }
+
+                    targetPicture.IsActive = true;
+                    var imageStream = proxy.Get(targetPicture.DisplayName);
+                    model.UrlName = Convert.ToBase64String(ReadFileStream(imageStream));
+                }
             }
-            proxy.Close();
+            
             return View(model);
         }
 
@@ -54,14 +57,15 @@ namespace WcfImageVeiwer.Client.Controllers
             {
                 try
                 {
-                    var proxy = new PictureManager();
-                    var uploadMessage = new FileUploadMessage
+                    using (var proxy = new PictureManager())
                     {
-                        Name = uploadFile.FileName,
-                        Image = uploadFile.InputStream
-                    };
-                    proxy.Upload(uploadMessage);
-                    proxy.Close();
+                        var uploadMessage = new FileUploadMessage
+                        {
+                            Name = uploadFile.FileName,
+                            Image = uploadFile.InputStream
+                        };
+                        proxy.Upload(uploadMessage);
+                    }
                 }
                 catch (FaultException<ArgumentException> ex)
                 {

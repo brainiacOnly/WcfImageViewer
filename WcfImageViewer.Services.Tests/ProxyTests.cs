@@ -32,18 +32,19 @@ namespace WcfImageViewer.Services.Tests
 
         private void SendImage(string fromPath)
         {
-            var proxy = new ClientProxy();
-            var fileInfo = new FileInfo(fromPath);
-            using (FileStream stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
+            using (var proxy = new ClientProxy())
             {
-                var request = new FileUploadMessage
+                var fileInfo = new FileInfo(fromPath);
+                using (FileStream stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
                 {
-                    Image = stream,
-                    Name = fileInfo.Name
-                };
-                proxy.Upload(request);
+                    var request = new FileUploadMessage
+                    {
+                        Image = stream,
+                        Name = fileInfo.Name
+                    };
+                    proxy.Upload(request);
+                }
             }
-            proxy.Close();
         }
 
         [TestMethod]
@@ -59,14 +60,16 @@ namespace WcfImageViewer.Services.Tests
         [TestMethod]
         public void ShouldDonloadAllImages()
         {
-            var proxy = new ClientProxy();
+            PictureInfo[] result;
             var imageInfo1 = new FileInfo(ConfigurationManager.AppSettings["image1"]);
             var imageInfo2 = new FileInfo(ConfigurationManager.AppSettings["image2"]);
-            SendImage(imageInfo1.FullName);
-            SendImage(imageInfo2.FullName);
-            
-            var result = proxy.GetAll();
-            proxy.Close();
+
+            using (var proxy = new ClientProxy())
+            {
+                SendImage(imageInfo1.FullName);
+                SendImage(imageInfo2.FullName);
+                result = proxy.GetAll();
+            }
 
             Assert.AreEqual(2, result.Length);
             Assert.IsTrue(result.Any(i => i.Name == imageInfo1.Name));
@@ -76,12 +79,16 @@ namespace WcfImageViewer.Services.Tests
         [TestMethod]
         public void ShouldDownloadImage()
         {
-            var proxy = new ClientProxy();
             var imageInfo = new FileInfo(ConfigurationManager.AppSettings["image1"]);
-            SendImage(imageInfo.FullName);
             var bufferName = Path.Combine(imageInfo.Directory.FullName, "buffer." + imageInfo.Name);
+            Stream result;
 
-            var result = proxy.Get(imageInfo.FullName);
+            using (var proxy = new ClientProxy())
+            {
+                SendImage(imageInfo.FullName);
+                result = proxy.Get(imageInfo.FullName);
+            }
+            
             using (FileStream writerStream = new FileStream(bufferName, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 result.CopyTo(writerStream);
@@ -96,15 +103,16 @@ namespace WcfImageViewer.Services.Tests
         [TestMethod]
         public void ShouldThrowExceptionOnNotFoundFile()
         {
-            var proxy = new ClientProxy();
-
-            try
+            using (var proxy = new ClientProxy())
             {
-                var result = proxy.Get("123.jpg");
-            }
-            catch (FaultException<FileNotFoundException> ex)
-            {
-                Console.WriteLine(ex.Detail.Message);
+                try
+                {
+                    var result = proxy.Get("123.jpg");
+                }
+                catch (FaultException<FileNotFoundException> ex)
+                {
+                    Console.WriteLine(ex.Detail.Message);
+                }
             }
         }
 
@@ -112,52 +120,51 @@ namespace WcfImageViewer.Services.Tests
         public void ShouldThrowExceptionOnWrongName()
         {
             var imageInfo = new FileInfo(ConfigurationManager.AppSettings["image1"]);
-            var proxy = new ClientProxy();
-
-            try
+            using (var proxy = new ClientProxy())
             {
-                using (FileStream stream = new FileStream(imageInfo.FullName, FileMode.Open, FileAccess.Read))
+                try
                 {
-                    var request = new FileUploadMessage
+                    using (FileStream stream = new FileStream(imageInfo.FullName, FileMode.Open, FileAccess.Read))
                     {
-                        Image = stream,
-                        Name = "?:////\\\\"
-                    };
-                    proxy.Upload(request);
+                        var request = new FileUploadMessage
+                        {
+                            Image = stream,
+                            Name = "?:////\\\\"
+                        };
+                        proxy.Upload(request);
+                    }
+                }
+                catch (FaultException<ArgumentException> ex)
+                {
+                    Console.WriteLine(ex.Detail.Message);
                 }
             }
-            catch (FaultException<ArgumentException> ex)
-            {
-                Console.WriteLine(ex.Detail.Message);
-            }
-            
-            proxy.Close();
         }
 
         [TestMethod]
         public void ShouldThrowExceptionOnUnknownExtension()
         {
             var imageInfo = new FileInfo(ConfigurationManager.AppSettings["image1"]);
-            var proxy = new ClientProxy();
 
-            try
+            using (var proxy = new ClientProxy())
             {
-                using (FileStream stream = new FileStream(imageInfo.FullName, FileMode.Open, FileAccess.Read))
+                try
                 {
-                    var request = new FileUploadMessage
+                    using (FileStream stream = new FileStream(imageInfo.FullName, FileMode.Open, FileAccess.Read))
                     {
-                        Image = stream,
-                        Name = "unknown-extinsion.tiff"
-                    };
-                    proxy.Upload(request);
+                        var request = new FileUploadMessage
+                        {
+                            Image = stream,
+                            Name = "unknown-extinsion.tiff"
+                        };
+                        proxy.Upload(request);
+                    }
+                }
+                catch (FaultException<ArgumentException> ex)
+                {
+                    Console.WriteLine(ex.Detail.Message);
                 }
             }
-            catch (FaultException<ArgumentException> ex)
-            {
-                Console.WriteLine(ex.Detail.Message);
-            }
-
-            proxy.Close();
         }
     }
 }
