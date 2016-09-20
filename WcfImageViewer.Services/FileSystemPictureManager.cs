@@ -52,20 +52,8 @@ namespace WcfImageViewer.Services
         {
             var fullName = Path.Combine(_storageDirectory, name);
             FileStream result = null;
-            try
-            {
-                result = new FileStream(fullName, FileMode.Open, FileAccess.Read);
-            }
-            catch (FileNotFoundException ex)
-            {
-                throw new FaultException<FileNotFoundException>(ex);
-            }
+            result = new FileStream(fullName, FileMode.Open, FileAccess.Read);
             return result;
-        }
-
-        public async Task<Stream> GetAsync(string name)
-        {
-            return await Task.Factory.StartNew(() => { Thread.Sleep(5000); return Get(name); });
         }
 
         public void Upload(FileUploadMessage picture)
@@ -73,20 +61,13 @@ namespace WcfImageViewer.Services
             var fullName = Path.Combine(_storageDirectory, picture.Name);
             FileStream targetStream = null;
 
-            try
+            if (!KNOWN_EXTENSIONS.Any(e => picture.Name.ToLower().EndsWith(e)))
+                throw new ArgumentException("The file is not an image! Unknown extension");
+            using (targetStream = new FileStream(fullName, FileMode.Create, FileAccess.Write, FileShare.None))
             {
-                if (!KNOWN_EXTENSIONS.Any(e => picture.Name.ToLower().EndsWith(e)))
-                    throw new ArgumentException("The file is not an image! Unknown extension");
-                using (targetStream = new FileStream(fullName, FileMode.Create, FileAccess.Write, FileShare.None))
-                {
-                    picture.Image.CopyTo(targetStream);
-                    targetStream.Close();
-                    picture.Image.Close();
-                }
-            }
-            catch (ArgumentException ex)
-            {
-                throw new FaultException<ArgumentException>(ex);
+                picture.Image.CopyTo(targetStream);
+                targetStream.Close();
+                picture.Image.Close();
             }
         }
     }

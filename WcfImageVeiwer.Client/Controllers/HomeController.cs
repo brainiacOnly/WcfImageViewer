@@ -34,7 +34,7 @@ namespace WcfImageVeiwer.Client.Controllers
                     {
                         targetPicture = model.Pictures.FirstOrDefault(i => i.DisplayName.GetHashCode().ToString() == id);
                         if (targetPicture == null)
-                            throw new AggregateException("The image was not found");
+                            throw new ArgumentException("The image was not found");
                     }
                     else
                     {
@@ -42,8 +42,23 @@ namespace WcfImageVeiwer.Client.Controllers
                     }
 
                     targetPicture.IsActive = true;
-                    var imageStream = proxy.Get(targetPicture.DisplayName);
-                    model.UrlName = Convert.ToBase64String(ReadFileStream(imageStream));
+                    try
+                    {
+                        var imageStream = proxy.Get(targetPicture.DisplayName);
+                        model.UrlName = Convert.ToBase64String(ReadFileStream(imageStream));
+                    }
+                    catch (FaultException<ExceptionDetail> ex)
+                    {
+                        ViewData["Message"] = ex.Detail.Message;
+                        ViewData["StackTrace"] = ex.Detail.StackTrace;
+                        return View("Error");
+                    }
+                    catch (FaultException ex)
+                    {
+                        ViewData["Message"] = ex.Message;
+                        ViewData["StackTrace"] = ex.StackTrace;
+                        return View("Error");
+                    }
                 }
             }
             
@@ -67,10 +82,16 @@ namespace WcfImageVeiwer.Client.Controllers
                         proxy.Upload(uploadMessage);
                     }
                 }
-                catch (FaultException<ArgumentException> ex)
+                catch (FaultException<ExceptionDetail> ex)
                 {
                     ViewData["Message"] = ex.Detail.Message;
                     ViewData["StackTrace"] = ex.Detail.StackTrace;
+                    return View("Error");
+                }
+                catch (FaultException ex)
+                {
+                    ViewData["Message"] = ex.Message;
+                    ViewData["StackTrace"] = ex.StackTrace;
                     return View("Error");
                 }
             }

@@ -13,11 +13,9 @@ namespace WcfImageViewer.Contracts.ServiceContracts
         PictureInfo[] GetAll();
 
         [OperationContract]
-        [FaultContract(typeof(FileNotFoundException))]
         Stream Get(string name);
 
         [OperationContract]
-        [FaultContract(typeof(ArgumentException))]
         void Upload(FileUploadMessage picture);
     }
 }
